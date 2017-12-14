@@ -16,18 +16,32 @@ const Telegraf = require('telegraf'),
     Telegram = require('telegraf/telegram'),
     session = require('telegraf/session'),
     request = require('request'),
+    azureCongitiveServiceKey = "696675426390442cbd2a171839fba936",
     uriBase = "https://northeurope.api.cognitive.microsoft.com/vision/v1.0/ocr?language=unk",
     headers = {
         "Content-Type": "application/json",
-        "Ocp-Apim-Subscription-Key": "HERE SHOUDL BE YOUR AZURE SERVICE KEY"
+        "Ocp-Apim-Subscription-Key": azureCongitiveServiceKey
     },
     options = {
         url: uriBase,
         method: 'POST',
         headers: headers
     },
-    bot = new Telegraf("HERE SHOULD BE YOUR BOT KEY"),
-    telegram = new Telegram("HERE SHOULD BE YOUR BOT KEY");
+    botKey = "421719339:AAFkYw-wh98IwGk01UYB7ZN0rpbKjtOUC8E",
+    bot = new Telegraf(botKey),
+    telegram = new Telegram(botKey);
+
+const extractTextFromResponse = (response) => {
+    let text = '';
+    response.regions.forEach((region) => {
+        region.lines.forEach((line) => {
+            line.words.forEach((word) => {
+                text += word.text + ' ';
+            });
+        });
+    });
+    return text;
+};
 
 bot.use(session());
 
@@ -35,26 +49,22 @@ bot.command('help', (ctx) => ctx.reply('This bot recognise text from image'));
 
 bot.on('photo', (ctx) => {
     let receivedPhoto = ctx.update.message.photo;
-
-    telegram.getFileLink(receivedPhoto[receivedPhoto.length - 1].file_id).then((fileLink) => {
+    let receivedPhotoFileId = receivedPhoto[receivedPhoto.length - 1].file_id;
+    telegram.getFileLink(receivedPhotoFileId).then((fileLink) => {
         options.body = `{"url": "${fileLink}"}`;
-        request(options, function (error, response, body) {
-            if (!error && response.statusCode === 200) {
-                let text = '';
-                let resp = JSON.parse(body);
-                resp.regions.forEach( (region) => {
-                    region.lines.forEach( (line) => {
-                        line.words.forEach( (word) => {
-                            text += word.text + ' ';
-                        });
-                    });
-                });
-                ctx.reply(text);
+        request(options, (err, res, body) => {
+            if (!err && res.statusCode === 200) {
+                let response = JSON.parse(body);
+                if (response.regions.length > 0)
+                    ctx.reply(extractTextFromResponse(response));
+                else
+                    ctx.replyWithHTML("<code>No text was detected.</code>");
             }
-            else
-                ctx.reply(error);
+            else {
+                ctx.replyWithHTML(`<code>${err}</code>`);
+            }
         });
-    });
+    }).catch((error) => ctx.replyWithHTML(`<code>${error}</code>`))
 });
 
 bot.startPolling();
