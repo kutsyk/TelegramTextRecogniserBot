@@ -10,7 +10,7 @@ const Telegraf = require('telegraf'),
     Telegram = require('telegraf/telegram'),
     request = require('request');
 
-const azureCongitiveServiceKey = "696675426390442cbd2a171839fba936",
+const azureCongitiveServiceKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     uriBase = "https://northeurope.api.cognitive.microsoft.com/vision/v1.0/ocr?language=unk",
     headers = {
         "Content-Type": "application/json",
@@ -21,7 +21,7 @@ const azureCongitiveServiceKey = "696675426390442cbd2a171839fba936",
         method: 'POST',
         headers: headers
     };
-const botKey = "421719339:AAFkYw-wh98IwGk01UYB7ZN0rpbKjtOUC8E",
+const botKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     bot = new Telegraf(botKey),
     telegram = new Telegram(botKey);
 
