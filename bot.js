@@ -4,19 +4,13 @@
  * @author Vasyl Kutsyk
  * @licence MIT
  *
- * @link https://westus.dev.cognitive.microsoft.com/docs/services/56f91f2d778daf23d8ec6739/operations/56f91f2e778daf14a499e1fc
- * @link https://core.telegram.org/bots/api#getfile
- * @link https://github.com/telegraf/telegraf/tree/master/docs/examples
- * @link http://telegraf.js.org/#/?id=getfile
- *
  */
-
 
 const Telegraf = require('telegraf'),
     Telegram = require('telegraf/telegram'),
-    session = require('telegraf/session'),
-    request = require('request'),
-    azureCongitiveServiceKey = "696675426390442cbd2a171839fba936",
+    request = require('request');
+
+const azureCongitiveServiceKey = "696675426390442cbd2a171839fba936",
     uriBase = "https://northeurope.api.cognitive.microsoft.com/vision/v1.0/ocr?language=unk",
     headers = {
         "Content-Type": "application/json",
@@ -26,8 +20,8 @@ const Telegraf = require('telegraf'),
         url: uriBase,
         method: 'POST',
         headers: headers
-    },
-    botKey = "421719339:AAFkYw-wh98IwGk01UYB7ZN0rpbKjtOUC8E",
+    };
+const botKey = "421719339:AAFkYw-wh98IwGk01UYB7ZN0rpbKjtOUC8E",
     bot = new Telegraf(botKey),
     telegram = new Telegram(botKey);
 
@@ -43,9 +37,7 @@ const extractTextFromResponse = (response) => {
     return text;
 };
 
-bot.use(session());
-
-bot.command('help', (ctx) => ctx.reply('This bot recognise text from image'));
+bot.command('help', (ctx) => ctx.reply('This bot recognise text from image. Just send a picture for it.'));
 
 bot.on('photo', (ctx) => {
     let receivedPhoto = ctx.update.message.photo;

@@ -1,0 +1,14 @@
+{
+  "name": "bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kutsyk Vasyl",
+  "license": "ISC",
+  "dependencies": {
+    "telegraf": "^3.17.2"
+  }
+}
